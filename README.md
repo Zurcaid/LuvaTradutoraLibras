@@ -38,5 +38,8 @@ O sistema é dividido nos seguintes módulos:
 - Linguagem: C/C++
 - Plataforma: Arduino IDE / PlatformIO
 - Bibliotecas:
-  - MPU6050
-  - Wire.h
+  - Adafruit MPU6050
+  - Adafruit Unified Sensor
+  - Wire.h (built-in Arduino library)
+
+A biblioteca **Adafruit MPU6050** foi modificada para atender aos requisitos específicos deste projeto. A versão modificada está incluída neste repositório.
