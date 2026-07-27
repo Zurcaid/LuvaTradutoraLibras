@@ -3,9 +3,9 @@
 #include <Adafruit_Sensor.h>
 #include <Wire.h>
 
-#define d0 14 // dedao
+#define d0 14 // polegar
 #define d1 27 // indicador
-#define d2 26 // do meio
+#define d2 26 // medio
 #define d3 25 // anelar
 #define d4 33 // minimo
 #define botaoBoot 0
@@ -26,6 +26,7 @@ void setup()
   while (!Serial)
     delay(10);
 
+  // Setup do mpu6050
   if (!mpu.begin())
   {
     Serial.println("Sensor nao detectado");
@@ -117,6 +118,7 @@ void loop()
   sensors_event_t a, g, temp;
   mpu.getEvent(&a, &g, &temp);
 
+  // offset
   rot_x += g.gyro.x + 0.02603;
   rot_y += g.gyro.y - 0.00485;
   rot_z += g.gyro.z + 0.0061;
@@ -124,6 +126,7 @@ void loop()
   libras_code = 0;
   letra = ' ';
 
+  // Cada digito representa a inclinacao de um dos dedos, sendo 0 completamente reto, 1 completamente dobrado, 2 um valor intermediario
   if (analogRead(d0) > 2500)
   {
     libras_code += 10000;
@@ -157,6 +160,7 @@ void loop()
     libras_code += 2;
   }
 
+  // Verifica o caso de cada uma das possiveis posicoes de mao para converter de libras para o alfabeto.
   switch (libras_code)
   {
   case 1111:
@@ -295,6 +299,7 @@ void loop()
     Serial.print(rot_z);
     Serial.println(" rad");
 
+    // Definicoes sem uso por enquanto
     if (rot_x > 300)
     {
       Serial.println("Inclinado para frente.");
@@ -308,8 +313,7 @@ void loop()
       Serial.println("Girando");
     }
 
-    int estado = digitalRead(botaoBoot);
-
+    // print da posicao de cada dedo
     Serial.print("DEDAO: ");
     Serial.println(analogRead(d0));
     Serial.print("INDICADOR: ");
@@ -325,9 +329,11 @@ void loop()
     Serial.print("PALAVRA: ");
     Serial.println(palavra);
 
+    int estado = digitalRead(botaoBoot);
+    // Quando o botao for pressionado a letra e registrada
     if (estado == LOW)
     {
-      if (letra == " ")
+      if (letra == " ") // Caso nenhuma letra seja detectada, a ultima letra da palavra e apagada.
       {
         if (palavra.length() > 0)
         {
