@@ -121,10 +121,6 @@ void loop() {
   rot_y += g.gyro.y-0.00485;
   rot_z += g.gyro.z+0.0061;
 
-  // rot_x = 0.98 * (rot_x + g.gyro.x * tempo_atual) + 0.02 * a.acceleration.x;
-  // rot_y = 0.98 * (rot_y + g.gyro.y * tempo_atual) + 0.02 * a.acceleration.y;
-
-
   long dt = millis() - tempo_atual;
   filtered_rot_x = double(0.98 * (rot_x + gyro.x * dt) + 0.02 * acceleration.x);
   filtered_rot_y = double(0.98 * (rot_y + gyro.y * dt) + 0.02 * acceleration.y);
@@ -243,13 +239,7 @@ void loop() {
     default:
       letra = ' ';
   }
-
-<<<<<<< HEAD
-  if (dt > 500)
-  {
-=======
-  if(millis()-tempo_atual > 500){
->>>>>>> b13a46c7d7d664314c1e2e85ad01da74456ee404
+   if (dt > 500){
     Serial.println(libras_code);
 
     tempo_atual = millis();
