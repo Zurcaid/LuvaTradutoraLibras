@@ -12,7 +12,7 @@
 
 Adafruit_MPU6050 mpu;
 
-double rot_x = 0, rot_y = 0, rot_z = 0;
+double rot_x = 0, rot_y = 0, rot_z = 0, filtered_rot_x, filtered_rot_y;
 long unsigned tempo_atual = 0;
 
 int libras_code = 0;
@@ -123,6 +123,10 @@ void loop()
   rot_y += g.gyro.y - 0.00485;
   rot_z += g.gyro.z + 0.0061;
 
+  long dt = millis() - tempo_atual;
+  filtered_rot_x = double(0.98 * (rot_x + gyro.x * dt) + 0.02 * acceleration.x);
+  filtered_rot_y = double(0.98 * (rot_y + gyro.y * dt) + 0.02 * acceleration.y);
+                   
   libras_code = 0;
   letra = ' ';
 
@@ -269,7 +273,7 @@ void loop()
     letra = ' ';
   }
 
-  if (millis() - tempo_atual > 500)
+  if (dt > 500)
   {
     Serial.println(libras_code);
 
