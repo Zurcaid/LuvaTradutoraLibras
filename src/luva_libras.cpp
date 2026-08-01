@@ -16,7 +16,7 @@
 Adafruit_MPU6050 mpu;
 
 double rot_x = 0, rot_y = 0, rot_z = 0, filtered_rot_x, filtered_rot_y;
-long unsigned tempo_atual = 0;
+long unsigned tempo_atual = 0, letras_debounce = 0;
 
 int libras_code = 0;
 String letra = "a";
@@ -111,6 +111,8 @@ void setup() {
   pinMode(d2, INPUT);
   pinMode(d3, INPUT);
   pinMode(d4, INPUT);
+
+  letra = ' ';
 }
 
 void loop() {
@@ -131,9 +133,9 @@ void loop() {
   if(analogRead(d0) > 2500){
     libras_code += 10000;
   }
-  if(analogRead(d1) > 4000){
+  if(analogRead(d1) > 2000){
     libras_code += 1000;
-  }else if(analogRead(d1) > 3000){
+  }else if(analogRead(d1) > 1000){
     libras_code += 2000;
   }
   if(analogRead(d2) > 3000){
@@ -141,104 +143,122 @@ void loop() {
   }
   if(analogRead(d3) > 4000){
     libras_code += 10;
-  }else if(analogRead(d3) > 3000){
+  }else if(analogRead(d3) > 3500){
     libras_code += 20;
   }
-  if(analogRead(d4) > 4000){
+  if(analogRead(d4) > 2000){
     libras_code += 1;
-  }else if(analogRead(d4) > 3500){
+  }else if(analogRead(d4) > 900){
     libras_code += 2;
   }
 
-  switch(libras_code){
-    case 1111:
-      letra = 'A';
-      break;
-    case 10000:
-      letra = 'B';
-      break;
-    case 1112:
-      if((g.gyro.x > 5) || (g.gyro.x < -5)){
-        letra = "C (cedillha)";
-      }else{
-        letra = 'C';
-      }
-      break;
-    case 112:
-      if(rot_y < -600){
-        letra = 'Q';
-      }else{
-        letra = 'D';
-      }
-      break;
-    case 11111:
-      letra = 'E';
-      break;
-    case 1000:
-      letra = 'F';
-      break;
-    case 10112:
-    case 10111:
-      if(rot_y < -600){
-        letra = 'Q';
-      }else if((a.acceleration.y < -4) || (a.acceleration.y > 4)){
-        letra = 'Z';
-      }
-      else{
-        letra = 'G';
-      }
-      break;
-    case 12:
-      if((rot_y < -300) && (rot_x > 300)){
-        letra = 'P';
-      }else if(a.acceleration.x < 8){
-        letra = 'K';
-      }else{
-        letra = 'H';
-      }
-      break;
-    case 11110:
-      if(rot_x > 400){
-        letra = 'J';
-      }else{
-        letra = 'I';
-      }
-      break;
-    case 111:
-      letra = 'L';
-      break;  
-    case 10001:
-    case 10002:
-      if(rot_y < -600){
-        letra = 'M';
-      }else{
-        letra = 'W';
-      }
-      break;
-    case 10011:
-    case 10012:
-      if(rot_y < -500){
-        letra = 'N';
-      }else{
-        letra = 'R';
-      }
-      break;
-    case 11112:
-      letra = 'O';
-      break;
-    case 11:
-      if(digitalRead(contato_d1d2)){
-        letra = 'U';
-      }else{
-        letra = 'V';
-      }
-      break;
-    case 1110:
-      letra = 'Y';
-      break;
-    default:
-      letra = ' ';
+  if(millis()-letras_debounce > 1000){
+    switch(libras_code){
+      case 1111:
+        letra = 'A';
+        break;
+      case 10000:
+        letra = 'B';
+        break;
+      case 1112:
+      case 2112:
+        if((g.gyro.y > 5) || (g.gyro.y < -5)){
+          letra = "C (cedillha)";
+          letras_debounce = millis();
+        }else{
+          letra = 'C';
+        }
+        break;
+      case 112:
+        if(rot_y < -600){
+          letra = 'Q';
+        }else{
+          letra = 'D';
+        }
+        break;
+      case 11111:
+        letra = 'E';
+        break;
+      case 2000:
+      case 1000:
+        letra = 'F';
+        break;
+      case 10112:
+      case 10111:
+        if(rot_x < -600){
+          letra = 'Q';
+        }else if((a.acceleration.x > 10) || (a.acceleration.x < 10 < -5) && (rot_x > -200)){
+          letra = 'Z';
+          letras_debounce = millis();
+        }else{
+          letra = 'G';
+        }
+        break;
+      case 12:
+        if((rot_x < -250)){
+          letra = 'P';
+        }else if((a.acceleration.y > -4) && (rot_x > -100)){
+          letra = 'K';
+          letras_debounce = millis();
+        }else if((g.gyro.y < -5)){
+          letra = 'H';
+          letras_debounce = millis();
+        }
+        break;
+      case 11110:
+      case 12110:
+        if(rot_x < -600){
+          letra = 'J';
+        }else{
+          letra = 'I';
+        }
+        break;
+      case 111:
+        letra = 'L';
+        break;  
+      case 10001:
+      case 10002:
+        if(rot_x < -600){
+          letra = 'M';
+        }else{
+          letra = 'W';
+        }
+        break;
+      case 10011:
+      case 10012:
+        if(rot_x < -500){
+          letra = 'N';
+        }else{
+          letra = 'R';
+        }
+        break;
+      case 11112:
+      case 12112:
+        letra = 'O';
+        break;
+      case 11:
+        if(digitalRead(contato_d1d2)){
+          letra = 'U';
+        }else{
+          letra = 'V';
+        }
+        break;
+      case 12000:
+        letra = 'T';
+        break;
+      case 12111:
+        if(rot_x < -300){
+          letra = 'X';
+        }
+        break;
+      case 1110:
+        letra = 'Y';
+        break;
+      default:
+        letra = ' ';
+    }
   }
+  
    if (dt > 500){
     Serial.println(libras_code);
 
