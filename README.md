@@ -8,6 +8,7 @@ O projeto utiliza sensores ópticos para detectar a flexão dos dedos e uma unid
 
 ## Demonstração
 
+https://github.com/user-attachments/assets/963f3b5b-ce53-4a00-856f-9022fcdc757f
 
 ## Funcionamento
 
@@ -56,6 +57,8 @@ A biblioteca **Adafruit MPU6050** foi modificada para atender aos requisitos esp
 
 ## Estrutura do projeto
 
+```text
+.
 ├── include/
 ├── lib/
 │   └── Adafruit_MPU6050/
@@ -63,6 +66,8 @@ A biblioteca **Adafruit MPU6050** foi modificada para atender aos requisitos esp
 │   └── luva_libras.cpp
 ├── platformio.ini
 └── README.md
+```
+
 
 ## Resultados
 
