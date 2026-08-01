@@ -26,7 +26,6 @@ O sistema é dividido nos seguintes módulos:
 - **MPU6050:** responsável pela medição da orientação da mão.
 - **ESP32:** realiza a leitura dos sensores e o processamento dos dados.
 - **Algoritmo de classificação:** determina a letra correspondente ao sinal realizado.
-- **Display OLED:** exibe a letra reconhecida pelo sistema.
 
 ## Hardware
 
