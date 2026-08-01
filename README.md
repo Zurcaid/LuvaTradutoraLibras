@@ -6,6 +6,9 @@ O projeto utiliza sensores ópticos para detectar a flexão dos dedos e uma unid
 
 ---
 
+## Demonstração
+
+
 ## Funcionamento
 
 A luva utiliza sensores ópticos de flexão baseados na variação da intensidade luminosa entre um LED e um LDR posicionados em cada dedo.
@@ -31,7 +34,6 @@ O sistema é dividido nos seguintes módulos:
 | Sensores ópticos (LED + LDR) | Detecção da flexão dos dedos |
 | MPU6050 | Determinação da orientação da mão |
 | Microcontrolador | Processamento dos dados dos sensores |
-| Display OLED | Exibição da letra reconhecida |
 
 ## Software
 
@@ -43,3 +45,54 @@ O sistema é dividido nos seguintes módulos:
   - Wire.h (built-in Arduino library)
 
 A biblioteca **Adafruit MPU6050** foi modificada para atender aos requisitos específicos deste projeto. A versão modificada está incluída neste repositório.
+
+## Como executar
+
+1. Clone este repositório.
+2. Abra o projeto no PlatformIO.
+3. Instale as dependências necessárias.
+4. Conecte o ESP32 ao computador.
+5. Faça o upload do firmware.
+
+## Estrutura do projeto
+
+├── include/
+├── lib/
+│   └── Adafruit_MPU6050/
+├── src/
+│   └── luva_libras.cpp
+├── platformio.ini
+└── README.md
+
+## Resultados
+
+O sistema é capaz de reconhecer as seguintes letras do alfabeto manual da Libras:
+
+| Letra | Reconhecimento |
+|-------|----------------|
+| A | ✓ |
+| B | ✓ |
+| C | ✓ |
+| D | ✓ |
+| E | ✓ |
+| F | ✓ |
+| G | ✓ |
+| H | ✓ |
+| I | ✓ |
+| J | ✓ |
+| K | ✓ |
+| L | ✓ |
+| M | ✓ |
+| N | ✓ |
+| O | ✓ |
+| P | ✓ |
+| Q | ✓ |
+| R | ✓ |
+| S | X |
+| T | ✓ |
+| U | ✓ |
+| V | ✓ |
+| W | ✓ |
+| X | ✓ |
+| Y | ✓ |
+| Z | ✓ |
