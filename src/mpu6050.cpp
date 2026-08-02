@@ -1,4 +1,7 @@
-#include "mpu6050"
+#include "mpu6050.h"
+#include <Adafruit_MPU6050.h>
+
+Adafruit_MPU6050 mpu;
 
 void statusMPU(){
   
