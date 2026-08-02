@@ -69,119 +69,14 @@ void loop() {
                    
   libras_code = 0;
   letra = ' ';
-
-  convertCode(dedos, libras_code);
-
-  if(millis()-letras_debounce > 1000){
-    switch(libras_code){
-      case 1111:
-        letra = 'A';
-        break;
-      case 10000:
-        letra = 'B';
-        break;
-      case 1112:
-      case 2112:
-        if((g.gyro.y > 5) || (g.gyro.y < -5)){
-          letra = "C (cedillha)";
-          letras_debounce = millis();
-        }else{
-          letra = 'C';
-        }
-        break;
-      case 112:
-        if(rot_y < -600){
-          letra = 'Q';
-        }else{
-          letra = 'D';
-        }
-        break;
-      case 11111:
-        letra = 'E';
-        break;
-      case 2000:
-      case 1000:
-        letra = 'F';
-        break;
-      case 10112:
-      case 10111:
-        if(rot_x < -600){
-          letra = 'Q';
-        }else if((a.acceleration.x > 10) || (a.acceleration.x < 10 < -5) && (rot_x > -200)){
-          letra = 'Z';
-          letras_debounce = millis();
-        }else{
-          letra = 'G';
-        }
-        break;
-      case 12:
-        if((rot_x < -250)){
-          letra = 'P';
-        }else if((a.acceleration.y > -4) && (rot_x > -100)){
-          letra = 'K';
-          letras_debounce = millis();
-        }else if((g.gyro.y < -5)){
-          letra = 'H';
-          letras_debounce = millis();
-        }
-        break;
-      case 11110:
-      case 12110:
-        if(rot_x < -600){
-          letra = 'J';
-        }else{
-          letra = 'I';
-        }
-        break;
-      case 111:
-        letra = 'L';
-        break;  
-      case 10001:
-      case 10002:
-        if(rot_x < -600){
-          letra = 'M';
-        }else{
-          letra = 'W';
-        }
-        break;
-      case 10011:
-      case 10012:
-        if(rot_x < -500){
-          letra = 'N';
-        }else{
-          letra = 'R';
-        }
-        break;
-      case 11112:
-      case 12112:
-        letra = 'O';
-        break;
-      case 11:
-        if(digitalRead(contato_d1d2)){
-          letra = 'U';
-        }else{
-          letra = 'V';
-        }
-        break;
-      case 12000:
-        letra = 'T';
-        break;
-      case 12111:
-        if(rot_x < -300){
-          letra = 'X';
-        }
-        break;
-      case 1110:
-        letra = 'Y';
-        break;
-      default:
-        letra = ' ';
-    }
-  }
+  int state_d12 = analogRead(contato_d1d2);
   
-   if (dt > 500){
-    Serial.println(libras_code);
+  convert_code(dedos, libras_code);
+  convert_libras(libras_code, g, a, state_d12);
 
+  if(dt > 500){
+    Serial.println(libras_code);
+    
     tempo_atual = millis();
  
     printAcceleration(a);
