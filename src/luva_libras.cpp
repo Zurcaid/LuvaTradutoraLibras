@@ -17,6 +17,8 @@
 
 Adafruit_MPU6050 mpu;
 
+const int dedos[5] = {d0, d1, d2, d3, d4};
+
 double rot_x = 0, rot_y = 0, rot_z = 0, filtered_rot_x, filtered_rot_y;
 long unsigned tempo_atual = 0, letras_debounce = 0;
 
@@ -41,7 +43,6 @@ void setup() {
   
   Serial.println("");
   delay(100);
-
 
   pinMode(botaoBoot, INPUT_PULLUP);
   pinMode(contato_d1d2, INPUT_PULLUP);
@@ -69,27 +70,7 @@ void loop() {
   libras_code = 0;
   letra = ' ';
 
-  if(analogRead(d0) > 2500){
-    libras_code += 10000;
-  }
-  if(analogRead(d1) > 2000){
-    libras_code += 1000;
-  }else if(analogRead(d1) > 1000){
-    libras_code += 2000;
-  }
-  if(analogRead(d2) > 3000){
-    libras_code += 100;
-  }
-  if(analogRead(d3) > 4000){
-    libras_code += 10;
-  }else if(analogRead(d3) > 3500){
-    libras_code += 20;
-  }
-  if(analogRead(d4) > 2000){
-    libras_code += 1;
-  }else if(analogRead(d4) > 900){
-    libras_code += 2;
-  }
+  convertCode(dedos, libras_code);
 
   if(millis()-letras_debounce > 1000){
     switch(libras_code){
