@@ -124,8 +124,8 @@ void loop() {
   rot_z += g.gyro.z+0.0061;
 
   long dt = millis() - tempo_atual;
-  filtered_rot_x = double(0.98 * (rot_x + gyro.x * dt) + 0.02 * acceleration.x);
-  filtered_rot_y = double(0.98 * (rot_y + gyro.y * dt) + 0.02 * acceleration.y);
+  filtered_rot_x = double(0.98 * (rot_x + g.gyro.x * dt) + 0.02 * a.acceleration.x);
+  filtered_rot_y = double(0.98 * (rot_y + g.gyro.y * dt) + 0.02 * a.acceleration.y);
                    
   libras_code = 0;
   letra = ' ';
