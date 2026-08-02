@@ -2,7 +2,8 @@
 #include <Adafruit_MPU6050.h>
 #include <Adafruit_Sensor.h>
 #include <Wire.h>
-#include "mpu6050"
+#include "mpu6050.h"
+#include "dados_sensores.h"
 
 #define d0 14  // dedao
 #define d1 27  // indicador
@@ -201,30 +202,10 @@ void loop() {
     Serial.println(libras_code);
 
     tempo_atual = millis();
-
-    Serial.print("Acceleration X: ");
-    Serial.print(a.acceleration.x);
-    Serial.print(", Y: ");
-    Serial.print(a.acceleration.y);
-    Serial.print(", Z: ");
-    Serial.print(a.acceleration.z);
-    Serial.println(" m/s^2");
-
-     Serial.print("Angular acceleration X: ");
-    Serial.print(g.gyro.x);
-    Serial.print(", Y: ");
-    Serial.print(g.gyro.y);
-    Serial.print(", Z: ");
-    Serial.print(g.gyro.z);
-    Serial.println(" rad/s");
-
-    Serial.print("Rotation X: ");
-    Serial.print(rot_x);
-    Serial.print(", Y: ");
-    Serial.print(rot_y);
-    Serial.print(", Z: ");
-    Serial.print(rot_z);
-    Serial.println(" rad");
+ 
+    printAcceleration(a);
+    printAngularAcceleration(g);
+    printRotation(rot_x, rot_y, rot_z);
 
     if(rot_x > 300){
       Serial.println("Inclinado para frente.");
