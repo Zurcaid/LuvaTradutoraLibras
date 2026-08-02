@@ -120,29 +120,11 @@ void loop() {
         }
       }else{
         palavra.concat(letra);
-        switch(letra.charAt(0)){
-          case 'A': 
-          case 'B': 
-          case 'C': 
-          case 'D': 
-          case 'E': 
-          case 'F': 
-          case 'G': 
-          case 'I': 
-          case 'O': 
-          case 'R': 
-          case 'S': 
-          case 'T': 
-          case 'U': 
-          case 'V': 
-          case 'W': 
-          case 'Y': 
+        if(letra != ""){
             rot_x = 0;
             rot_y = 0;
             rot_z = 0;
-            break;
-          default:
-            break;
+          }
         }
       }
     }
