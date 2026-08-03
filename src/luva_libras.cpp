@@ -2,6 +2,8 @@
 #include <Adafruit_MPU6050.h>
 #include <Adafruit_Sensor.h>
 #include <Wire.h>
+#include "mpu6050.h"
+#include "dados_sensores.h"
 
 #define d0 14  // dedao
 #define d1 27  // indicador
@@ -14,6 +16,8 @@
 #define botaoBoot 17
 
 Adafruit_MPU6050 mpu;
+
+const int dedos[5] = {d0, d1, d2, d3, d4};
 
 double rot_x = 0, rot_y = 0, rot_z = 0, filtered_rot_x, filtered_rot_y;
 long unsigned tempo_atual = 0, letras_debounce = 0;
@@ -35,74 +39,10 @@ void setup() {
   }
   Serial.println("Sensor detectado");
 
-
-
-  mpu.setAccelerometerRange(MPU6050_RANGE_8_G);
-  Serial.print("Range do acelerometro definido: ");
-  switch (mpu.getAccelerometerRange()) {
-    case MPU6050_RANGE_2_G:
-      Serial.println("+-2G");
-      break;
-    case MPU6050_RANGE_4_G:
-      Serial.println("+-4G");
-      break;
-    case MPU6050_RANGE_8_G:
-      Serial.println("+-8G");
-      break;
-    case MPU6050_RANGE_16_G:
-      Serial.println("+-16G");
-      break;
-  }
-  mpu.setGyroRange(MPU6050_RANGE_500_DEG);
-  Serial.print("Range do giroscopio definido: ");
-  switch (mpu.getGyroRange()) {
-    case MPU6050_RANGE_250_DEG:
-      Serial.println("+- 250 deg/s");
-      break;
-    case MPU6050_RANGE_500_DEG:
-      Serial.println("+- 500 deg/s");
-      break;
-    case MPU6050_RANGE_1000_DEG:
-      Serial.println("+- 1000 deg/s");
-      break;
-    case MPU6050_RANGE_2000_DEG:
-      Serial.println("+- 2000 deg/s");
-      break;
-  }
-  mpu.setFilterBandwidth(MPU6050_BAND_5_HZ);
-  Serial.print("Filtro de frequencia definido: ");
-  switch (mpu.getFilterBandwidth()) {
-    case MPU6050_BAND_260_HZ:
-      Serial.println("260 Hz");
-      break;
-
-    case MPU6050_BAND_184_HZ:
-      Serial.println("184 Hz");
-      break;
-
-    case MPU6050_BAND_94_HZ:
-      Serial.println("94 Hz");
-      break;
-
-    case MPU6050_BAND_44_HZ:
-      Serial.println("44 Hz");
-      break;
-
-    case MPU6050_BAND_21_HZ:
-      Serial.println("21 Hz");
-      break;
-
-    case MPU6050_BAND_10_HZ:
-      Serial.println("10 Hz");
-      break;
-
-    case MPU6050_BAND_5_HZ:
-      Serial.println("5 Hz");
-      break;
-  }
+  statusMPU();
+  
   Serial.println("");
   delay(100);
-
 
   pinMode(botaoBoot, INPUT_PULLUP);
   pinMode(contato_d1d2, INPUT_PULLUP);
@@ -129,164 +69,19 @@ void loop() {
                    
   libras_code = 0;
   letra = ' ';
-
-  if(analogRead(d0) > 2500){
-    libras_code += 10000;
-  }
-  if(analogRead(d1) > 2000){
-    libras_code += 1000;
-  }else if(analogRead(d1) > 1000){
-    libras_code += 2000;
-  }
-  if(analogRead(d2) > 3000){
-    libras_code += 100;
-  }
-  if(analogRead(d3) > 4000){
-    libras_code += 10;
-  }else if(analogRead(d3) > 3500){
-    libras_code += 20;
-  }
-  if(analogRead(d4) > 2000){
-    libras_code += 1;
-  }else if(analogRead(d4) > 900){
-    libras_code += 2;
-  }
-
-  if(millis()-letras_debounce > 1000){
-    switch(libras_code){
-      case 1111:
-        letra = 'A';
-        break;
-      case 10000:
-        letra = 'B';
-        break;
-      case 1112:
-      case 2112:
-        if((g.gyro.y > 5) || (g.gyro.y < -5)){
-          letra = "C (cedillha)";
-          letras_debounce = millis();
-        }else{
-          letra = 'C';
-        }
-        break;
-      case 112:
-        if(rot_y < -600){
-          letra = 'Q';
-        }else{
-          letra = 'D';
-        }
-        break;
-      case 11111:
-        letra = 'E';
-        break;
-      case 2000:
-      case 1000:
-        letra = 'F';
-        break;
-      case 10112:
-      case 10111:
-        if(rot_x < -600){
-          letra = 'Q';
-        }else if((a.acceleration.x > 10) || (a.acceleration.x < 10 < -5) && (rot_x > -200)){
-          letra = 'Z';
-          letras_debounce = millis();
-        }else{
-          letra = 'G';
-        }
-        break;
-      case 12:
-        if((rot_x < -250)){
-          letra = 'P';
-        }else if((a.acceleration.y > -4) && (rot_x > -100)){
-          letra = 'K';
-          letras_debounce = millis();
-        }else if((g.gyro.y < -5)){
-          letra = 'H';
-          letras_debounce = millis();
-        }
-        break;
-      case 11110:
-      case 12110:
-        if(rot_x < -600){
-          letra = 'J';
-        }else{
-          letra = 'I';
-        }
-        break;
-      case 111:
-        letra = 'L';
-        break;  
-      case 10001:
-      case 10002:
-        if(rot_x < -600){
-          letra = 'M';
-        }else{
-          letra = 'W';
-        }
-        break;
-      case 10011:
-      case 10012:
-        if(rot_x < -500){
-          letra = 'N';
-        }else{
-          letra = 'R';
-        }
-        break;
-      case 11112:
-      case 12112:
-        letra = 'O';
-        break;
-      case 11:
-        if(digitalRead(contato_d1d2)){
-          letra = 'U';
-        }else{
-          letra = 'V';
-        }
-        break;
-      case 12000:
-        letra = 'T';
-        break;
-      case 12111:
-        if(rot_x < -300){
-          letra = 'X';
-        }
-        break;
-      case 1110:
-        letra = 'Y';
-        break;
-      default:
-        letra = ' ';
-    }
-  }
+  int state_d12 = analogRead(contato_d1d2);
   
-   if (dt > 500){
+  convert_code(dedos, libras_code);
+  convert_libras(libras_code, g, a, state_d12);
+
+  if(dt > 500){
     Serial.println(libras_code);
-
+    
     tempo_atual = millis();
-
-    Serial.print("Acceleration X: ");
-    Serial.print(a.acceleration.x);
-    Serial.print(", Y: ");
-    Serial.print(a.acceleration.y);
-    Serial.print(", Z: ");
-    Serial.print(a.acceleration.z);
-    Serial.println(" m/s^2");
-
-     Serial.print("Angular acceleration X: ");
-    Serial.print(g.gyro.x);
-    Serial.print(", Y: ");
-    Serial.print(g.gyro.y);
-    Serial.print(", Z: ");
-    Serial.print(g.gyro.z);
-    Serial.println(" rad/s");
-
-    Serial.print("Rotation X: ");
-    Serial.print(rot_x);
-    Serial.print(", Y: ");
-    Serial.print(rot_y);
-    Serial.print(", Z: ");
-    Serial.print(rot_z);
-    Serial.println(" rad");
+ 
+    printAcceleration(a);
+    printAngularAcceleration(g);
+    printRotation(rot_x, rot_y, rot_z);
 
     if(rot_x > 300){
       Serial.println("Inclinado para frente.");
@@ -325,29 +120,11 @@ void loop() {
         }
       }else{
         palavra.concat(letra);
-        switch(letra.charAt(0)){
-          case 'A': 
-          case 'B': 
-          case 'C': 
-          case 'D': 
-          case 'E': 
-          case 'F': 
-          case 'G': 
-          case 'I': 
-          case 'O': 
-          case 'R': 
-          case 'S': 
-          case 'T': 
-          case 'U': 
-          case 'V': 
-          case 'W': 
-          case 'Y': 
+        if(letra != ""){
             rot_x = 0;
             rot_y = 0;
             rot_z = 0;
-            break;
-          default:
-            break;
+          }
         }
       }
     }
