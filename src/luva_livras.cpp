@@ -1,0 +1,139 @@
+#include <Arduino.h>
+#include <Adafruit_MPU6050.h>
+#include <Adafruit_Sensor.h>
+#include <Wire.h>
+#include "mpu6050.h"
+#include "dados_sensores.h"
+
+#define d0 14  // dedao
+#define d1 27  // indicador
+#define d2 26  // do meio
+#define d3 25  // anelar
+#define d4 33  // minimo
+
+#define contato_d1d2 16
+
+#define botaoBoot 17
+
+Adafruit_MPU6050 mpu;
+
+const int dedos[5] = {d0, d1, d2, d3, d4};
+
+double rot_x = 0, rot_y = 0, rot_z = 0, filtered_rot_x, filtered_rot_y;
+long unsigned tempo_atual = 0, letras_debounce = 0;
+
+int libras_code = 0;
+String letra = "a";
+String palavra = "";
+
+void setup() {
+  Serial.begin(115200);
+
+  while (!Serial) delay(10);
+
+  if (!mpu.begin()) {
+    Serial.println("Sensor nao detectado");
+    while (1) {
+      delay(10);
+    }
+  }
+  Serial.println("Sensor detectado");
+
+  statusMPU();
+  
+  Serial.println("");
+  delay(100);
+
+  pinMode(botaoBoot, INPUT_PULLUP);
+  pinMode(contato_d1d2, INPUT_PULLUP);
+  pinMode(d0, INPUT);
+  pinMode(d1, INPUT);
+  pinMode(d2, INPUT);
+  pinMode(d3, INPUT);
+  pinMode(d4, INPUT);
+
+  letra = ' ';
+}
+
+void loop() {
+  sensors_event_t a, g, temp;
+  mpu.getEvent(&a, &g, &temp);
+
+  rot_x += g.gyro.x+0.02603;
+  rot_y += g.gyro.y-0.00485;
+  rot_z += g.gyro.z+0.0061;
+
+  long dt = millis() - tempo_atual;
+  filtered_rot_x = double(0.98 * (rot_x + g.gyro.x * dt) + 0.02 * a.acceleration.x);
+  filtered_rot_y = double(0.98 * (rot_y + g.gyro.y * dt) + 0.02 * a.acceleration.y);
+                   
+  libras_code = 0;
+  letra = ' ';
+  int state_d12 = analogRead(contato_d1d2);
+  
+  convert_code(dedos, libras_code);
+  convert_libras(libras_code, g, a, state_d12);
+
+  if(dt > 500){
+    Serial.println(libras_code);
+    
+    tempo_atual = millis();
+ 
+    printAcceleration(a);
+    printAngularAcceleration(g);
+    printRotation(rot_x, rot_y, rot_z);
+
+    if(rot_x > 300){
+      Serial.println("Inclinado para frente.");
+    }
+    if(rot_y < -300){
+      Serial.println("Rotacionado anti-horário");
+    }
+    if((g.gyro.y > 5) || (g.gyro.y < -3)){
+      Serial.println("Girando");
+    }
+
+    int estado = digitalRead(botaoBoot);
+
+
+    Serial.print("DEDAO: ");
+    Serial.println(analogRead(d0));
+    Serial.print("INDICADOR: ");
+    Serial.println(analogRead(d1));
+    Serial.print("DO MEIO: ");
+    Serial.println(analogRead(d2));
+    Serial.print("ANELAR: ");
+    Serial.println(analogRead(d3));
+    Serial.print("MINIMO: ");
+    Serial.println(analogRead(d4));
+    Serial.print("CONTATO: ");
+    Serial.println(digitalRead(contato_d1d2));
+    Serial.print("\nLETRA: ");
+    Serial.println(letra);
+    Serial.print("PALAVRA: ");
+    Serial.println(palavra);
+
+    if (estado == LOW) {
+      if(letra == " "){
+        if (palavra.length() > 0) {
+          palavra.remove(palavra.length() - 1);
+        }
+      }else{
+        palavra.concat(letra);
+        if(letra != ""){
+            rot_x = 0;
+            rot_y = 0;
+            rot_z = 0;
+          }
+        }
+      }
+    }
+
+
+    if (estado == LOW) {
+      delay(1000);
+      tempo_atual = millis();
+    }
+  }
+
+}
