@@ -33,7 +33,7 @@ O sistema é dividido nos seguintes módulos:
 |------------|--------|
 | Sensores ópticos (LED + LDR) | Detecção da flexão dos dedos |
 | MPU6050 | Determinação da orientação da mão |
-| Microcontrolador | Processamento dos dados dos sensores |
+| ESP32 | Processamento dos dados dos sensores |
 
 ## Software
 
