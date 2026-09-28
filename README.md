@@ -14,7 +14,7 @@ O projeto utiliza sensores ópticos para detectar a flexão dos dedos e uma unid
 
 Vídeo demonstrando o reconhecimento de alguns sinais e a conversão em texto/voz.
 
-![Demonstração da luva em funcionamento](https://github.com/user-attachments/assets/963f3b5b-ce53-4a00-856f-9022fcdc757f)
+https://github.com/user-attachments/assets/963f3b5b-ce53-4a00-856f-9022fcdc757f
 
 ## Funcionamento
 
